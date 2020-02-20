@@ -1,0 +1,96 @@
+body{
+    background-color: rgb(206, 206, 206);
+    color: rgb(53, 53, 53);
+    margin: 0px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+header{
+    background: rgb(21, 21, 37);
+    background-image: url('img/bench31.jpg');
+    background-size: 100%;
+    background-position: center;
+    padding: 10px 20px;
+    height: 260px;
+    text-align: center;
+    border-bottom: 5px solid rgb(20, 33, 92);
+}
+.feature{
+    display: flex;
+    flex-direction: column;
+}
+.feature div{
+    background-color: red;
+    display: flex;
+}
+.feature figure div{
+    background-color: transparent;
+    margin-top: auto;
+    margin-bottom: auto;
+    width: 100px;
+}
+
+.feature .snapLeft{
+    background-color: rgb(160, 200, 224);
+    display: flex;
+    flex-direction: row;
+    text-align: center;
+}
+.feature .snapRight{
+    background-color: rgb(160, 160, 214);
+    display: flex;
+    flex-direction: row-reverse;
+    text-align: center;
+}
+.feature figure img{
+    width: 150px;
+    display: inline-block;
+    border-radius: 50%;
+    margin: 0px 40px;
+    border: 10px solid white;
+}
+footer{
+    background: rgb(21, 21, 37);
+    padding: 10px 20px;
+    color: white;
+    height: 160px;
+    text-align: center;
+}
+ul{
+    margin: 0px;
+    padding: 0px;
+    list-style-type: none;
+}
+header ul{
+    margin: 20px;
+    padding: 0px;
+    text-align: center;
+    list-style-type: none;
+    padding: 50px 0px;
+}
+header li{
+    display: inline-block;
+}
+header a{
+    text-decoration: none;
+    color: white;
+    margin: 0px;
+    font-size: 12px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+header a:hover {
+    background: rgba(29, 35, 48, 0.822);
+}
+.linkMenuBar li{
+    padding: 0px 10px;
+}
+header .logo a{
+    background-image: url('img/logo_small2.png');
+    background-size: 200px;
+    background-repeat: no-repeat;
+    position: relative;
+    width: 200px;
+    height: 60px;
+    top: -20px;
+    text-indent: -9999999px;
+    display: inline-block;
+}

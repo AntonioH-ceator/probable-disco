@@ -1,0 +1,163 @@
+﻿
+/*
+Duvidas? Acesse: https://www.youtube.com/watch?v=yj-j9gsQe5Q || https://www.youtube.com/watch?v=rEtEt9pK6YI
+*/
+a{
+	text-decoration: none;
+	color: black;
+	font-size: 18px;
+	font-family: Lucida Sans;
+}
+h1,h2,h3{
+	font-family: Century Gothic;
+	color:gray;
+}
+p , li, a{
+	font-family: Century Gothic;
+	font-size: 14px;
+	color: black;
+	font-size: 16px;
+	
+}
+h1{
+	font-size:50px;
+}
+
+h2 {
+	font-size: 30px;
+}
+
+h3 {
+	font-size: 20px;
+}
+
+li {
+	display: block;
+}
+
+.cabeça{
+	margin:auto;
+	background-color: #2e435b;
+	width:1000;
+}img.logo{
+	width: 600;
+    padding: 15 200;
+}
+
+#nav1 , #nav2{
+	margin:auto;
+	background-color: #c4d3e0;
+	padding:5 0;
+	width:1000;
+} 
+#nav1 div , #nav2 div {
+	margin: auto;
+    margin-left: 0px;
+	padding-left:2;	
+}
+#nav1 div a {
+	padding: 5 125;
+	background-color: #c4d3e0;
+}
+
+#nav2 div a {
+	padding: 5 93;
+    background-color: #c4d3e0;
+    margin-left: 1;
+}
+
+#nav1 div a:hover, #nav2 div a:hover{
+	background-color: #a4b3c0
+}
+
+#navGen {
+	margin:auto;
+	background-color: #c4d3e0;
+	padding:5 0;
+	width: 1000;
+}
+
+#navGen div{
+	margin: auto;
+}
+
+#navGen div a {
+	background-color: #c4d3e0;
+	padding: 5 93;
+}
+
+#navGen div a:hover{
+	background-color: #a4b3c0
+}
+
+.artigo{
+	margin:auto;
+    width: 1000;
+}
+
+.rodape{
+	margin: auto;
+	width: 1000
+}
+
+.artigo div{
+	margin: auto;
+	float: left;
+	width: 720;
+}
+
+.lado{
+	margin: auto;
+	width: 1000;
+}
+
+.lado div{
+	margin:auto;
+	float:right;
+}
+.lado div ul {
+	margin:auto;
+	float:center;
+	display: block;
+}
+
+.lado div h2 {
+	float: right;
+}
+
+.sineMenu {
+	float:right
+}
+
+.button li {
+	margin: auto;
+	display: block;
+	padding: 10;
+    text-align: center;
+}
+
+.button li:hover, a :hover{
+	background-color: #a4b3c0
+}
+
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
