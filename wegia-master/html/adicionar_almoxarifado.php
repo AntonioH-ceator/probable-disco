@@ -3,6 +3,9 @@
 	if(!isset($_SESSION['usuario'])){
 		header ("Location: ../index.php");
 	}
+	
+	// Adiciona a Função display_campo($nome_campo, $tipo_campo)
+	require_once "personalizacao_display.php";
 ?>
 <!doctype html>
 <html class="fixed">
@@ -24,7 +27,7 @@
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
 	<link rel="stylesheet" href="../assets/vendor/magnific-popup/magnific-popup.css" />
 	<link rel="stylesheet" href="../assets/vendor/bootstrap-datepicker/css/datepicker3.css" />
-	<link rel="icon" href="../img/logofinal.png" type="image/x-icon">
+	<link rel="icon" href="<?php display_campo("Logo",'file');?>" type="image/x-icon" id="logo-icon">
 
 	<!-- Theme CSS -->
 	<link rel="stylesheet" href="../assets/stylesheets/theme.css" />
@@ -71,7 +74,7 @@
 
 	<script type="text/javascript">
 		$(function () {
-	      $("#header").load("header.html");
+	      $("#header").load("header.php");
 	      $(".menuu").load("menu.html");
 	    });	
 	</script>
@@ -84,7 +87,7 @@
 		<header class="header">
 			<div class="logo-container">
 				<a href="home.php" class="logo">
-					<img src="../img/logofinal.png" height="35" alt="Porto Admin" />
+					<img src="<?php display_campo("Logo",'file');?>" height="35" alt="Porto Admin" />
 				</a>
 				<div class="visible-xs toggle-sidebar-left" data-toggle-class="sidebar-left-opened" data-target="html" data-fire-event="sidebar-left-opened">
 					<i class="fa fa-bars" aria-label="Toggle sidebar"></i>

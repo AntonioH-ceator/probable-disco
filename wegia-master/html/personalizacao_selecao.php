@@ -3,6 +3,110 @@
 	if(!isset($_SESSION['usuario'])){
 		header ("Location: ../index.php");
 	}
+	require_once "../dao/Conexao.php";
+	require_once "../classes/Personalizacao_campo.php";
+
+	// Adiciona a Função display_campo($nome_campo, $tipo_campo)
+	require_once "personalizacao_display.php";
+
+	$pdo = Conexao::connect();
+
+	$res = $pdo->query("select id_imagem, imagem as arquivo, tipo, nome from imagem;");
+	$img_tab = $res->fetchAll(PDO::FETCH_ASSOC);
+
+	
+
+	
+
+	
+	function display_img_selection($id,$pdo,$img_tab){
+		$tipo_display = $_POST["tipo"] . "-select";
+		echo('
+		<div class="tab-pane active" id="img-tab" role="tabpanel" aria-labelledby="home-tab">
+			<div style="display: flex; justify-content: space-between;">
+				<button class="btn btn-primary fill-space" onclick="open_tab('."'add_form'".')"><i class="fas fa-plus icon"></i>Adicionar Imagem</button>
+				<form action="personalizacao_upload.php" class="container" style="display: none; justify-content: space-between;" method="post" id="add_form" enctype="multipart/form-data">
+					<input type="file" name="img_file" class="form-control-file" style="padding: 10px;">
+					<input type="number" name="id_campo" value="'.$id.'" style="display: none;" readonly>
+					<button type="submit" class="btn btn-success"><i class="fas fa-arrow-right"></i></button>
+				</form>
+			</div>
+			<table class="table table-hover">
+				<thead>
+					<tr>
+					<th scope="col" width="30%">Arquivo</th>
+					<th scope="col">Visualização</th>
+					</tr>
+				</thead>
+				<tbody>
+		');
+		foreach($img_tab as $key => $value){
+			$img_item = new Campo(
+				[0 => $value["id_imagem"], 1 => $id],
+				$tipo_display,
+				$value["nome"],
+				$value["arquivo"]
+			);
+			$img_item->display();
+		}
+		echo('
+				</tbody>
+			</table>
+		</div>');
+	}
+
+	function display_car_selection($nome_carrossel, $pdo, $img_tab){
+		$tipo_display = $_POST["tipo"] . "-select";
+		$res = $pdo->query("select ic.id_imagem from campo_imagem c inner join tabela_imagem_campo ic on c.id_campo = ic.id_campo where c.tipo='car';");
+		$carrossel = $res->fetchAll(PDO::FETCH_ASSOC);
+		echo('
+		<div class="selection-field" id="matrix">
+		</div>
+		<form action="personalizacao_upload.php" method="post" id="car-selection" style="display: none;">
+			<input type="text" name="nome_car" value="' . $nome_carrossel . '" readonly>
+		</form>
+		<div>
+			<button class="btn btn-success fill-space" onclick="submitCar()">Enviar</button>
+		</div>
+		<div class="tab-pane active" id="img-tab" role="tabpanel" aria-labelledby="home-tab">
+			<table class="table table-hover">
+				<thead>
+					<tr>
+					<th scope="col" width="8%">Selecionar</th>
+					<th scope="col" width="30%">Arquivo</th>
+					<th scope="col">Visualização</th>
+					</tr>
+				</thead>
+				<tbody>
+		');
+
+
+		foreach ($img_tab as $key => $value){
+			$img_item = new Campo(
+				$value["id_imagem"],
+				$tipo_display,
+				$value["nome"],
+				$value["arquivo"]
+			);
+			$img_item->display();
+		}
+
+
+		echo('
+				</tbody>
+			</table>
+		</div>');
+
+		foreach ($carrossel as $key => $value){
+			$id = $value["id_imagem"];
+			echo("
+			<script>
+				addToSelection(document.getElementById('img-$id').parentNode.parentNode)
+			</script>
+			");
+		}
+	}
+
 ?>
 <!doctype html>
 <html class="fixed">
@@ -20,11 +124,12 @@
 
 	<!-- Vendor CSS -->
 	<link rel="stylesheet" href="../assets/vendor/bootstrap/css/bootstrap.css" />
+	<link rel="stylesheet" href="../css/personalizacao-theme.css" />
 	<link rel="stylesheet" href="../assets/vendor/font-awesome/css/font-awesome.css" />
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
 	<link rel="stylesheet" href="../assets/vendor/magnific-popup/magnific-popup.css" />
 	<link rel="stylesheet" href="../assets/vendor/bootstrap-datepicker/css/datepicker3.css" />
-	<link rel="icon" href="../img/logofinal.png" type="image/x-icon">
+	<link rel="icon" href="<?php display_campo("Logo",'file');?>" type="image/x-icon" id="logo-icon">
 
 	<!-- Theme CSS -->
 	<link rel="stylesheet" href="../assets/stylesheets/theme.css" />
@@ -68,10 +173,42 @@
 	<script>
    		document.write('<a href="' + document.referrer + '"></a>');
 	</script>
+	
+	<!-- Javascript: Seleção de imagem -->
+
+	<script>
+		function addToSelection(element){
+			var matrix = document.getElementById("matrix")
+			var fileName = element.children[1].innerText
+			var src = element.children[2].firstElementChild.src
+			var button = element.firstElementChild.firstElementChild.firstElementChild
+			var selected = button.className == 'btn btn-success' ? 1 : 0
+
+			if (selected == 0){
+
+				img = document.createElement("IMG")
+				img.src = src
+				img.id = fileName
+				img.classNmae = 'selected-imgr'
+				matrix.appendChild(img)
+				element.style.backgroundColor = '#ddffdd'
+				button.className = "btn btn-success"
+				button.title = "Desselecionar"
+				button.firstElementChild.className = "far fa-check-square"
+			}else{
+				element.style.backgroundColor = ''
+				button.className = "btn btn-light"
+				button.title = "Selecionar"
+				button.firstElementChild.className = "far fa-square"
+				var img = document.getElementById(fileName)
+				img.parentNode.removeChild(img)
+			}
+		}
+	</script>
 
 	<script type="text/javascript">
 		$(function () {
-	      $("#header").load("header.html");
+	      $("#header").load("header.php");
 	      $(".menuu").load("menu.html");
 	    });	
     </script>
@@ -91,7 +228,7 @@
 			<!-- end: sidebar -->
 			<section role="main" class="content-body">
 				<header class="page-header">
-					<h2>Seleção de Conteúdo</h2>
+					<h2>Seleção de Imagem</h2>
 					<div class="right-wrapper pull-right">
 						<ol class="breadcrumbs">
 							<li>
@@ -100,7 +237,7 @@
 								</a>
 							</li>
 							<li><span>Páginas</span></li>
-							<li><span>Seleção de Conteúdo</span></li>
+							<li><span>Seleção de Imagem</span></li>
 						</ol>
 						<a class="sidebar-right-toggle"><i class="fa fa-chevron-left"></i></a>
 					</div>
@@ -108,106 +245,127 @@
 
                 <!-- start: page -->
 
-                <div class="row" style="user-select:none;">
+                <div class="row">
 					<div class="col-md-4 col-lg-2"></div>
 					<div class="col-md-8 col-lg-8">
                         <div class="tab-content" id="myTabContent">
-							<div style="display: flex; justify-content: space-between;">
-								<button class="btn btn-success" onclick="open_tab('add_form')"><i class="fas fa-plus"></i></button>
-								<form action="personalizacao_upload.php" class="container" style="display: flex; justify-content: space-between; visibility: hidden;" method="post" id="add_form" enctype="multipart/form-data">
-									<input type="file" name="img_file" class="form-control-file" style="padding: 10px;">
-									<button type="submit" class="btn btn-success"><i class="fas fa-arrow-right"></i></button>
-								</form>
-							</div>
-                            <div class="tab-pane <?php echo($_POST['tipo'] == 'img' ? 'active' : 'fade'); ?>" id="img-tab" role="tabpanel" aria-labelledby="home-tab">
-								<table class="table table-hover">
-									<thead>
-										<tr>
-										<th scope="col">ID</th>
-										<th scope="col" width="30%">Arquivo</th>
-										<th scope="col">Visualização</th>
-										<th scope="col">Editar</th>
-										</tr>
-									</thead>
-									<tbody>
-										<tr>
-											<th scope="row" href="home.php">1</th>
-											<td>Logo</td>
-											<td>
-												<img id="img-1" src="../img/logofinal.png" width="100%">
-												<div id="file-1" style="display:none;" class="text-center mx-auto rounded bg-default">
-													<form action="personalizacao_upload.php" method="post"  enctype="multipart/form-data">
-														<input type="file" name="img_file" class="form-control-file" style="padding-top: 25%;">
-														<input type="submit" value="Selecionar" class="btn btn-success" style="margin-top: 10px; margin-bottom: 25%;">
-													</form>
-												</div>
-											</td>
-											<td class="d-flex flex-column"><div class="align-content-center text-center"><button class="btn btn-success" onclick="edit_row(1)"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></button></div></td>
-										</tr>
-										<tr>
-											<th scope="row">2</th>
-											<td>Carousel</td>
-											<td><img src="../img/LAJE1.jpg" width="100%"></td>
-										</tr>
-										<tr>
-											<th scope="row">3</th>
-											<td>Carrousel</td>
-											<td><img src="../img/LAJE2.jpg" width="100%"></td>
-										</tr>
-									</tbody>
-								</table>
-							</div>
 
-							<div class="tab-pane <?php echo($_POST['tipo'] == 'txt' ? 'active' : 'fade'); ?>" id="txt-tab" role="tabpanel" aria-labelledby="profile-tab">
-								<table class="table table-hover">
-									<thead>
-										<tr>
-										<th scope="col">ID</th>
-										<th scope="col">Nome</th>
-										<th scope="col">Visualização</th>
-										</tr>
-									</thead>
-									<tbody>
-										<tr>
-										<th scope="row">1</th>
-										<td>Título</td>
-										<td>LAJE - Lar Abrigo Amor a Jesus</td>
-										</tr>
-										<tr>
-										<th scope="row">2</th>
-										<td>Subtítulo</td>
-										<td>Web Gerenciador de instituições assistenciais</td>
-										</tr>
-										<tr>
-										<th scope="row">3</th>
-										<td>Conheça</td>
-										<td>O LAJE, Entidade Filantrópica fundada em 14 de julho de 1929, por um pequeno grupo de pessoas, todas friburguenses, preocupadas com a morte constante de mendigos nas ruas de nossa cidade, em função de frio e fome. <br>
-
-Dirigida por um grupo de voluntários, a diretoria é eleita de dois em dois anos para mandato que poderá ser renovado por mais dois anos. Um dos claros objetivos desde sua criação sempre foi o envolvimento da comunidade no trabalho voluntário. <br>
-
-Hoje, o Lar Abrigo Amor a Jesus é uma ILPI (Instituição de Longa Permanência para Idosos) e segue as normas previstas pela ANVISA. A Casa abriga cerca de 80 idosos, todos carentes, necessitados de cuidados especiais.</td>
-										</tr>
-										<tr>
-										<th scope="row">2</th>
-										<td>Objetivo</td>
-										<td>O objetivo principal do Lar Abrigo é a recuperação física e psicológica dos abrigados, tirando-lhes das condições sub-humanas em que muitas vezes são encontrados. <br>
-
-No Laje, há uma equipe de psicólogos, fisioterapeutas, nutricionistas, recreadores, médicos, enfermeiros, auxiliares e técnicos de enfermagem, cuidadores, além de equipes de apoio de lavanderia, limpeza, cozinha e as equipes administrativas e de serviços logísticos.</td>
-										</tr>
-									</tbody>
-								</table>
-							</div>
-
+							<?php
+							
+							$tipo = $_POST["tipo"];
+							if ($tipo == "img"){
+								$id = $_POST["id"];
+								display_img_selection($id,$pdo,$img_tab);
+							}elseif ($tipo == "car"){
+								$nome_car = $_POST["nome_car"];
+								display_car_selection($nome_car,$pdo,$img_tab);
+							}
+							?>
                         </div>
 					</div>
 				</div>
 
                 <!-- end: page -->
 				<script>
+
 					function open_tab(id){
-						var tag = document.getElementById(id);
-						tag.style.visibility = (tag.style.visibility == 'hidden' ? 'visible' : 'hidden');
+						var tag = window.document.getElementById(id)
+						var button = tag.parentNode.firstElementChild
+						var icon = tag.parentElement.firstElementChild.firstElementChild
+
+						button.innerHTML = button.innerText == "Adicionar Imagem" ? "<i class='fas fa-chevron-left'></i>" : "<i class='fas fa-plus icon'></i>Adicionar Imagem"
+						tag.style.display = tag.style.display == 'none' ? 'flex' : 'none'
+						
 					}
+
+					// Indica o ID da linha que está sendo editada
+					var selected
+
+
+					// Alterna entre o texto normal e a textarea da linha selecionada
+					function tr_select(id){
+						selected = id
+						var row = window.document.getElementById(id)
+						var icon = row.firstElementChild
+						var column_2 = row.children[2]
+						var column_3 = row.children[3]
+						if (column_2.style.display != 'none'){
+							column_2.style.display = 'none'
+							column_3.style.display = ''
+							column_3.firstElementChild.innerText = column_2.innerText
+							icon.firstElementChild.firstElementChild.className = "fas fa-chevron-left"
+						}else{
+							column_2.style.display = ''
+							column_3.style.display = 'none'
+							icon.firstElementChild.firstElementChild.className = "fas fa-edit"
+						}
+					}
+
+					function addToSelection(element){
+						var matrix = document.getElementById("matrix")
+						var fileName = element.children[1].innerText
+						var src = element.children[2].firstElementChild.src
+						var button = element.firstElementChild.firstElementChild.firstElementChild
+						var selected = button.className == 'btn btn-success' ? 1 : 0
+
+						if (selected == 0){
+
+							img = document.createElement("IMG")
+							img.src = src
+							img.id = fileName
+							img.classNmae = 'selected-imgr'
+							matrix.appendChild(img)
+							element.style.backgroundColor = '#ddffdd'
+							button.className = "btn btn-success"
+							button.title = "Desselecionar"
+							button.firstElementChild.className = "far fa-check-square"
+						}else{
+							element.style.backgroundColor = ''
+							button.className = "btn btn-light"
+							button.title = "Selecionar"
+							button.firstElementChild.className = "far fa-square"
+							var img = document.getElementById(fileName)
+							img.parentNode.removeChild(img)
+						}
+					}
+
+					function submitCar(){
+						var matrix = document.getElementById("matrix")
+						var form = document.getElementById("car-selection")
+						var qtd_img = matrix.childElementCount
+						if (qtd_img > 0){
+							for (var i = 0; i < qtd_img; i++){
+								input = document.createElement("INPUT")
+								input.readOnly = true
+								input.type = "text"
+								input.name = "imagem_" + i
+								input.value = matrix.children[i].id
+								form.appendChild(input)
+							}
+							form.submit()
+						}
+					}
+
+					function post(path, params, method='post') {
+						const form = document.createElement('form');
+						form.method = method;
+						form.action = path;
+
+						for (const key in params) {
+							if (params.hasOwnProperty(key)) {
+								const hiddenField = document.createElement('input');
+								hiddenField.type = 'hidden';
+								hiddenField.name = key;
+								hiddenField.value = params[key];
+
+								form.appendChild(hiddenField);
+							}
+						}
+
+						document.body.appendChild(form);
+						form.submit();
+					}
+
 				</script>
 			</section>
 		</div>

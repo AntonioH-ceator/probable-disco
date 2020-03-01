@@ -13,7 +13,7 @@
    			
 			$pdo = Conexao::connect();
 			$consulta = $pdo->query('SELECT id_pessoa, cpf, senha, nome from pessoa');
-			//$pwd=hash('sha256', $pwd);
+			$pwd=hash('sha256', $pwd);
 			while($linha = $consulta->fetch(PDO::FETCH_ASSOC)){
 				if($linha["cpf"] == $cpf && $linha["senha"] == $pwd){
 					$c = "true";
