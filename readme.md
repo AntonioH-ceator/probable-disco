@@ -1,3 +1,3 @@
-## Meu Portfólio
+## My 3 little sites
 
-Portfólio com projetos meus ou em que eu contribui
+I usualy start a project to put in practice new tecnologies i have learned. In this case, i used the basic ones when it comes to creating a site: HTML, PHP, JavaScript and MySQL.
